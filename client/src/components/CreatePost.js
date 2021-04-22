@@ -9,6 +9,7 @@ export const CreatePost = () => {
 
   const addPost = async () => {
     try {
+            console.log(form)
             const data = await request('/api/post/add', 'POST', { ...form })
             console.log(data)
         } catch (e) {
@@ -24,7 +25,7 @@ export const CreatePost = () => {
        async function getInfo() {
         try {
             const data = await request('/api/auth/info', 'POST', { id: userId })
-            setForm({ title: '', text: '', like: 0, authorId: userId, author: data.login })
+            setForm({ title: '', text: '', like: 0, authorId: userId, author: data.login, authorAvatar: data.avatar })
         } catch (e) {
             console.log(e)
         }
@@ -36,22 +37,22 @@ export const CreatePost = () => {
   return (
     <>
       <div className="form-post">
-        <h3>Создать вопрос</h3>
+        <h3>Create post</h3>
           <input
-            placeholder="Введите заголовок"
+            placeholder="Enter title"
             id="title"
             type="text"
             name="title"
             onChange={changeHandler}
           ></input>
           <textarea
-            placeholder="Введите описание"
+            placeholder="Enter description"
             id="text"
             type="text"
             name="text"
             onChange={changeHandler}
           ></textarea>
-          <button className="create-post" onClick={addPost}>Создать</button>
+          <button className="create-post" onClick={addPost}>Create</button>
       </div>
     </>
   )

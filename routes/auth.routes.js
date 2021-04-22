@@ -21,13 +21,6 @@ cloudinary.config({
 
 const cloudinaryUpload = file => cloudinary.uploader.upload(file);
 
-// const storage = multer.diskStorage({
-//    destination: "uploads/",
-//    filename: function(req, file, cb){
-//       cb(null, 'avatar' + moment().format('DDMMYYYY-HHmmss') + path.extname(file.originalname));
-//    }
-// });
-
 const formatBufferTo64 = file =>
   parser.format(path.extname(file.originalname).toString(), file.buffer)
 
@@ -56,65 +49,50 @@ router.post('/upload', upload.single('myImage'), async (req, res) => {
 // /api/auth/register
 router.post(
   '/register',
-  [
-    check('login', 'Некорректный login'),
-    check('password', 'Минимальная длина пароля 6 символов')
-      .isLength({ min: 6 }),
-    check('email').isEmail().normalizeEmail(),
-    check('name').isAlpha(),
-    check('surname').isAlpha(),
-  ],
+  // [
+  //   check('login', 'Некорректный login'),
+  //   check('password', 'Минимальная длина пароля 6 символов')
+  //     .isLength({ min: 6 }),
+  //   check('email').isEmail().normalizeEmail()
+  // ],
   async (req, res) => {
     try {
-    const errors = validationResult(req)
+    // const errors = validationResult(req)
 
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array(),
-        message: 'Некорректный данные при регистрации eqd'
-      })
-    }
+    // if (!errors.isEmpty()) {
+    //   res.status(400).json({
+    //     // errors: errors.array(),
+    //     message: 'invalid ' +  errors[0].param
+    //   })
+    // }
 
-    const { login, password, name, surname, email, avatar } = req.body
+    const { login, password, email, avatar } = req.body
     const candidate = await User.findOne({ login })
 
     if (candidate) {
-      return res.status(400).json({ message: 'Такой пользователь уже существует' })
+      return res.status(400).json({ message: 'Login is already use' })
     }
 
     const hashedPassword = await bcrypt.hash(password, 12)
-      const user = new User({
-        login, password: hashedPassword, like: 0, email, name, surname,
-        avatar: avatar
-      })
+    const user = new User({
+        login, password: hashedPassword, like: 0, email,
+        avatar: !!avatar ? avatar : "https://res.cloudinary.com/faqit/image/upload/v1618841792/ammm7gjtfgyj0dp0ykpe_g5zbll.jpg"
+    })
 
     await user.save()
       
-    res.json({ message: 'Пользователь создан' })
+    res.json({ message: "User create" })
 
   } catch (e) {
-    res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова', e })
+    res.status(500).json({ message: 'Something went wrong, please try again', e })
   }
 })
 
 // /api/auth/login
 router.post(
   '/login',
-  [
-    check('login', 'Введите корректный login'),
-    check('password', 'Введите пароль').exists()
-  ],
   async (req, res) => {
   try {
-    const errors = validationResult(req)
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array(),
-        message: 'Некорректный данные при входе в систему'
-      })
-    }
-
     const { login, password } = req.body
 
     const user = await User.findOne({ login })
@@ -136,6 +114,7 @@ router.post(
     )
 
     res.json({ token, userId: user.id })
+      res.json({ token, userId: user.id })
 
   } catch (e) {
     res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' })

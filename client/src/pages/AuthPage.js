@@ -41,9 +41,10 @@ export const AuthPage = () => {
         } else {
             try {
                 const data = await request('/api/auth/register', 'POST', { ...form })
-                setPromp(data.message)
-                await setRegistration(!registration)
-                await loginHandler()
+                console.log(data)
+                // setPromp(data)
+                // await setRegistration(false)
+                // await loginHandler()
             } catch (e) {
                 console.log(e)
             }
@@ -71,7 +72,7 @@ export const AuthPage = () => {
                         {registration ? 
                             <div className="card-content white-text">
                                 <h3 className="card-title">Register</h3>
-                                <div className="input-field">
+                                {/* <div className="input-field">
                                         <input
                                             placeholder="Enter name"
                                             id="name"
@@ -90,7 +91,7 @@ export const AuthPage = () => {
                                             className="custom-input"
                                             onChange={changeHandler}
                                         />
-                                </div>
+                                </div> */}
                                 <div className="input-field">
                                         <input
                                             placeholder="Enter login"

@@ -5,7 +5,8 @@ const schema = new Schema({
     text: { type: String, required: true },
     like: { type: Number, required: true },
     authorId: { type: Types.ObjectId, ref: 'User' },
-    date: { type: Date} ,
+    authorAvatar: { type: String },
+    date: { type: String} ,
     author: { type: String },
     whoLikes: {type: Array}
 })

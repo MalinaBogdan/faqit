@@ -11,14 +11,15 @@ const moment = require('moment')
 router.post(
   '/add', async (req, res) => {
     try {
-      const {title, text, like, authorId, author} = req.body
+      const {title, text, like, authorId, author, authorAvatar} = req.body
       const post = new Post({
         title,
         text,
         like,
         author,
         authorId,
-        date: moment().format('DD.MM.YYYY HH:mm')
+        authorAvatar,
+        date: moment().format('MMMM Do YYYY, h:mm:ss')
       })
 
       await post.save()
@@ -93,9 +94,10 @@ router.post(
         text,
         like: 0,
         authorId,
+        authorAvatar: author.avatar,
         postId: postId,
         author: author.login,
-        date: moment().format('DD.MM.YYYY HH:mm')
+        date: moment().format('MMMM Do YYYY, h:mm:ss')
       })
 
       await comment.save()
@@ -144,20 +146,18 @@ router.post(
 })
 
 router.post(
-  '/searc-author', async (req, res) => {
+  '/search', async (req, res) => {
     try {
       const posts = await Post.find()
 
       const fuse = new Fuse(posts, {
         keys: [
           'title',
-          'text'
+          'text',
+          'author'
         ]
       })
-
       const result = fuse.search(req.body.text)
-
-      console.log(posts)
       res.json(result)
     } catch (e) {
       console.log(e, 'err')
